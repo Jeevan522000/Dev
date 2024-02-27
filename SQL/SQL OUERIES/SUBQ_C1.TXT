@@ -1,0 +1,335 @@
+SQL> 
+SQL> SET PAGES 300 LINES 300
+SQL> 
+SQL> SELECT * FROM EMP;
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                       
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                       
+      7369 SMITH      CLERK           7902 17-DEC-80        800                    20                                                                                                                                                                                                                       
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30                                                                                                                                                                                                                       
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30                                                                                                                                                                                                                       
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                                                                                                                       
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30                                                                                                                                                                                                                       
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                                                                                                                       
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10                                                                                                                                                                                                                       
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                                                                                                                       
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10                                                                                                                                                                                                                       
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30                                                                                                                                                                                                                       
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20                                                                                                                                                                                                                       
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30                                                                                                                                                                                                                       
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20                                                                                                                                                                                                                       
+      7934 MILLER     CLERK           7782 23-JAN-82       1300                    10                                                                                                                                                                                                                       
+
+14 rows selected.
+
+SQL> SELECT * FROM DEPT;
+
+    DEPTNO DNAME          LOC                                                                                                                                                                                                                                                                               
+---------- -------------- -------------                                                                                                                                                                                                                                                                     
+        10 ACCOUNTING     NEW YORK                                                                                                                                                                                                                                                                          
+        20 RESEARCH       DALLAS                                                                                                                                                                                                                                                                            
+        30 SALES          CHICAGO                                                                                                                                                                                                                                                                           
+        40 OPERATIONS     BOSTON                                                                                                                                                                                                                                                                            
+
+SQL> 
+SQL> 1 QUERY
+SQL> 
+SQL> SELECT ENAME
+  2  FROM EMP
+  3  WHERE SAL > (SELECT SAL
+  4               FROM EMP
+  5               WHERE ENAME = 'SMITH');
+
+ENAME                                                                                                                                                                                                                                                                                                       
+----------                                                                                                                                                                                                                                                                                                  
+ALLEN                                                                                                                                                                                                                                                                                                       
+WARD                                                                                                                                                                                                                                                                                                        
+JONES                                                                                                                                                                                                                                                                                                       
+MARTIN                                                                                                                                                                                                                                                                                                      
+BLAKE                                                                                                                                                                                                                                                                                                       
+CLARK                                                                                                                                                                                                                                                                                                       
+SCOTT                                                                                                                                                                                                                                                                                                       
+KING                                                                                                                                                                                                                                                                                                        
+TURNER                                                                                                                                                                                                                                                                                                      
+ADAMS                                                                                                                                                                                                                                                                                                       
+JAMES                                                                                                                                                                                                                                                                                                       
+FORD                                                                                                                                                                                                                                                                                                        
+MILLER                                                                                                                                                                                                                                                                                                      
+
+13 rows selected.
+
+SQL> 
+SQL> 2 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME
+  2  FROM EMP
+  3  WHERE DEPTNO = (SELECT DEPTNO
+  4                  FROM EMP
+  5*                 WHERE ENAME = 'SCOTT')
+SQL> /
+
+ENAME                                                                                                                                                                                                                                                                                                       
+----------                                                                                                                                                                                                                                                                                                  
+SMITH                                                                                                                                                                                                                                                                                                       
+JONES                                                                                                                                                                                                                                                                                                       
+SCOTT                                                                                                                                                                                                                                                                                                       
+ADAMS                                                                                                                                                                                                                                                                                                       
+FORD                                                                                                                                                                                                                                                                                                        
+
+SQL> 
+SQL> 3 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME
+  2  FROM EMP
+  3  WHERE SAL > (SELECT SAL 
+  4               FROM EMP
+  5*              WHERE ENAME = 'MILLER')
+SQL> /
+
+ENAME                                                                                                                                                                                                                                                                                                       
+----------                                                                                                                                                                                                                                                                                                  
+ALLEN                                                                                                                                                                                                                                                                                                       
+JONES                                                                                                                                                                                                                                                                                                       
+BLAKE                                                                                                                                                                                                                                                                                                       
+CLARK                                                                                                                                                                                                                                                                                                       
+SCOTT                                                                                                                                                                                                                                                                                                       
+KING                                                                                                                                                                                                                                                                                                        
+TURNER                                                                                                                                                                                                                                                                                                      
+FORD                                                                                                                                                                                                                                                                                                        
+
+8 rows selected.
+
+SQL> 
+SQL> 4 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME
+  2  FROM EMP
+  3  WHERE JOB NOT IN  (SELECT JOB
+  4                     FROM EMP
+  5                     WHERE ENAME = 'ALLEN') AND SAL > (SELECT SAL
+  6                                                       FROM EMP
+  7*                                                      WHERE ENAME = 'MARTIN')
+SQL> /
+
+ENAME                                                                                                                                                                                                                                                                                                       
+----------                                                                                                                                                                                                                                                                                                  
+JONES                                                                                                                                                                                                                                                                                                       
+BLAKE                                                                                                                                                                                                                                                                                                       
+CLARK                                                                                                                                                                                                                                                                                                       
+SCOTT                                                                                                                                                                                                                                                                                                       
+KING                                                                                                                                                                                                                                                                                                        
+FORD                                                                                                                                                                                                                                                                                                        
+MILLER                                                                                                                                                                                                                                                                                                      
+
+7 rows selected.
+
+SQL> 
+SQL> 5 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME
+  2  FROM EMP
+  3  WHERE JOB = (SELECT JOB
+  4               FROM EMP
+  5               WHERE ENAME = 'JONES') AND SAL < (SELECT SAL 
+  6                                                 FROM EMP
+  7*                                                WHERE ENAME = 'SCOTT')
+SQL> /
+
+ENAME                                                                                                                                                                                                                                                                                                       
+----------                                                                                                                                                                                                                                                                                                  
+JONES                                                                                                                                                                                                                                                                                                       
+BLAKE                                                                                                                                                                                                                                                                                                       
+CLARK                                                                                                                                                                                                                                                                                                       
+
+SQL> 
+SQL> 6 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME
+  2  FROM EMP
+  3  WHERE HIREDATE > (SELECT HIREDATE
+  4                    FROM EMP
+  5*                   WHERE ENAME = 'BLAKE')
+SQL> /
+
+ENAME                                                                                                                                                                                                                                                                                                       
+----------                                                                                                                                                                                                                                                                                                  
+MARTIN                                                                                                                                                                                                                                                                                                      
+CLARK                                                                                                                                                                                                                                                                                                       
+SCOTT                                                                                                                                                                                                                                                                                                       
+KING                                                                                                                                                                                                                                                                                                        
+TURNER                                                                                                                                                                                                                                                                                                      
+ADAMS                                                                                                                                                                                                                                                                                                       
+JAMES                                                                                                                                                                                                                                                                                                       
+FORD                                                                                                                                                                                                                                                                                                        
+MILLER                                                                                                                                                                                                                                                                                                      
+
+9 rows selected.
+
+SQL> 
+SQL> 7 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM EMP
+  3  WHERE COMM IS NULL AND HIREDATE > (SELECT HIREDATE
+  4                                     FROM EMP
+  5*                                    WHERE ENAME = 'ALLEN')
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                       
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                       
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                                                                                                                       
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                                                                                                                       
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10                                                                                                                                                                                                                       
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                                                                                                                       
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10                                                                                                                                                                                                                       
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20                                                                                                                                                                                                                       
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30                                                                                                                                                                                                                       
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20                                                                                                                                                                                                                       
+      7934 MILLER     CLERK           7782 23-JAN-82       1300                    10                                                                                                                                                                                                                       
+
+9 rows selected.
+
+SQL> 
+SQL> 8 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT EMP.* , SAL + SAL*0.35 HIKE
+  2  FROM EMP
+  3  WHERE JOB = 'PRESIDENT' AND SAL > (SELECT SAL
+  4                                     FROM EMP
+  5*                                    WHERE ENAME = 'SMITH')
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO       HIKE                                                                                                                                                                                                            
+---------- ---------- --------- ---------- --------- ---------- ---------- ---------- ----------                                                                                                                                                                                                            
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10       6750                                                                                                                                                                                                            
+
+SQL> 
+SQL> 9 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME , HIREDATE
+  2  FROM EMP
+  3  WHERE COMM > SAL AND HIREDATE <  (SELECT HIREDATE
+  4                                    FROM EMP
+  5*                                   WHERE ENAME = 'KING')
+SQL> /
+
+ENAME      HIREDATE                                                                                                                                                                                                                                                                                         
+---------- ---------                                                                                                                                                                                                                                                                                        
+MARTIN     28-SEP-81                                                                                                                                                                                                                                                                                        
+
+SQL> 
+SQL> 10 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME , HIREDATE
+  2  FROM EMP
+  3  WHERE SAL/31 > (SELECT SAL/31
+  4                  FROM EMP
+  5                  WHERE ENAME = 'ALLEN')  AND HIREDATE <  (SELECT HIREDATE
+  6                                                           FROM EMP
+  7*                                                          WHERE ENAME = 'MILLER')
+SQL> /
+
+ENAME      HIREDATE                                                                                                                                                                                                                                                                                         
+---------- ---------                                                                                                                                                                                                                                                                                        
+JONES      02-APR-81                                                                                                                                                                                                                                                                                        
+BLAKE      01-MAY-81                                                                                                                                                                                                                                                                                        
+CLARK      09-JUN-81                                                                                                                                                                                                                                                                                        
+KING       17-NOV-81                                                                                                                                                                                                                                                                                        
+FORD       03-DEC-81                                                                                                                                                                                                                                                                                        
+
+SQL> 
+SQL> 11 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(ENAME) 
+  2  FROM EMP
+  3  WHERE COMM > SAL AND SAL > (SELECT SAL
+  4                              FROM EMP
+  5*                             WHERE ENAME = 'SMITH')
+SQL> /
+
+COUNT(ENAME)                                                                                                                                                                                                                                                                                                
+------------                                                                                                                                                                                                                                                                                                
+           1                                                                                                                                                                                                                                                                                                
+
+SQL> 
+SQL> 12 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME 
+  2  FROM EMP
+  3  WHERE ENAME LIKE 'S%' AND SAL > (SELECT SAL
+  4                                   FROM EMP
+  5                                   WHERE ENAME = 'ALLEN') AND SAL < (SELECT SAL
+  6                                                                     FROM EMP
+  7*                                                                    WHERE ENAME = 'FORD')
+SQL> /
+
+no rows selected
+
+SQL> 
+SQL> 13 QUERY
+SQL> 
+SQL> SELECT DNAME
+  2  FROM DEPT
+  3  WHERE DNAME LIKE '%L%';
+
+DNAME                                                                                                                                                                                                                                                                                                       
+--------------                                                                                                                                                                                                                                                                                              
+SALES                                                                                                                                                                                                                                                                                                       
+
+SQL> 
+SQL> 14 QUERY
+SQL> 
+SQL> SELECT MGR,JOB,DEPTNO
+  2  FROM EMP
+  3  WHERE COMM IS NULL;
+
+       MGR JOB           DEPTNO                                                                                                                                                                                                                                                                             
+---------- --------- ----------                                                                                                                                                                                                                                                                             
+      7902 CLERK             20                                                                                                                                                                                                                                                                             
+      7839 MANAGER           20                                                                                                                                                                                                                                                                             
+      7839 MANAGER           30                                                                                                                                                                                                                                                                             
+      7839 MANAGER           10                                                                                                                                                                                                                                                                             
+      7566 ANALYST           20                                                                                                                                                                                                                                                                             
+           PRESIDENT         10                                                                                                                                                                                                                                                                             
+      7788 CLERK             20                                                                                                                                                                                                                                                                             
+      7698 CLERK             30                                                                                                                                                                                                                                                                             
+      7566 ANALYST           20                                                                                                                                                                                                                                                                             
+      7782 CLERK             10                                                                                                                                                                                                                                                                             
+
+10 rows selected.
+
+SQL> 
+SQL> SPOOL OFF

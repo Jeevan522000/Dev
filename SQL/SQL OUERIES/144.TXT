@@ -1,0 +1,119 @@
+SQL> SET PAGES 400 LINES 400
+SQL> 
+SQL> 144 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME
+  2  FROM DEPT
+  3  WHERE DEPTNO IN (SELECT DEPTNO
+  4                   FROM EMP
+  5                   GROUP BY DEPTNO
+  6*                  HAVING COUNT(*)>=1)
+SQL> /
+
+DNAME                                                                                                                                                                                                                                                                                                                                                                                                           
+--------------                                                                                                                                                                                                                                                                                                                                                                                                  
+SALES                                                                                                                                                                                                                                                                                                                                                                                                           
+RESEARCH                                                                                                                                                                                                                                                                                                                                                                                                        
+ACCOUNTING                                                                                                                                                                                                                                                                                                                                                                                                      
+
+SQL> 
+SQL> 145 QUERY
+SQL> ED
+Wrote file afiedt.buf
+
+  1   SELECT DNAME
+  2   FROM DEPT
+  3   WHERE NOT EXISTS ( SELECT DEPTNO
+  4                 FROM EMP
+  5*                WHERE EMP.DEPTNO = DEPT.DEPTNO)
+SQL> /
+
+DNAME                                                                                                                                                                                                                                                                                                                                                                                                           
+--------------                                                                                                                                                                                                                                                                                                                                                                                                  
+OPERATIONS                                                                                                                                                                                                                                                                                                                                                                                                      
+
+SQL> 
+SQL> 146 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1   SELECT ENAME
+  2  FROM EMP
+  3   WHERE MGR IS NULL AND EMPNO IN (SELECT MGR
+  4                                   FROM EMP
+  5                                   GROUP BY MGR
+  6*                                  HAVING COUNT(MGR)>=1)
+SQL> /
+
+ENAME                                                                                                                                                                                                                                                                                                                                                                                                           
+----------                                                                                                                                                                                                                                                                                                                                                                                                      
+KING                                                                                                                                                                                                                                                                                                                                                                                                            
+
+SQL> 
+SQL> 147 QUERY
+SQL> 
+SQL> SELECT ENAME
+  2  FROM EMP
+  3  
+SQL> 
+SQL> 149 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM EMP
+  3  WHERE DEPTNO IN(SELECT DEPTNO
+  4                  FROM EMP
+  5                  WHERE HIREDATE >( SELECT HIREDATE
+  6                                    FROM EMP
+  7                                    WHERE ENAME='SMITH')
+  8                                    GROUP BY DEPTNO
+  9*                                   HAVING COUNT(*)>4 )
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                                                                                                                           
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                           
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30                                                                                                                                                                                                                                                                                                                           
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30                                                                                                                                                                                                                                                                                                                           
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                                                                                                                                                                                                                           
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30                                                                                                                                                                                                                                                                                                                           
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30                                                                                                                                                                                                                                                                                                                           
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30                                                                                                                                                                                                                                                                                                                           
+
+6 rows selected.
+
+SQL> 
+SQL> 150 QUERY
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT E1.ENAME MANAGER, E2.ENAME EMPLOYEE
+  2  FROM EMP E1, EMP E2
+  3* WHERE E1.EMPNO= E2.MGR
+SQL> /
+
+MANAGER    EMPLOYEE                                                                                                                                                                                                                                                                                                                                                                                             
+---------- ----------                                                                                                                                                                                                                                                                                                                                                                                           
+FORD       SMITH                                                                                                                                                                                                                                                                                                                                                                                                
+BLAKE      ALLEN                                                                                                                                                                                                                                                                                                                                                                                                
+BLAKE      WARD                                                                                                                                                                                                                                                                                                                                                                                                 
+KING       JONES                                                                                                                                                                                                                                                                                                                                                                                                
+BLAKE      MARTIN                                                                                                                                                                                                                                                                                                                                                                                               
+KING       BLAKE                                                                                                                                                                                                                                                                                                                                                                                                
+KING       CLARK                                                                                                                                                                                                                                                                                                                                                                                                
+JONES      SCOTT                                                                                                                                                                                                                                                                                                                                                                                                
+BLAKE      TURNER                                                                                                                                                                                                                                                                                                                                                                                               
+SCOTT      ADAMS                                                                                                                                                                                                                                                                                                                                                                                                
+BLAKE      JAMES                                                                                                                                                                                                                                                                                                                                                                                                
+JONES      FORD                                                                                                                                                                                                                                                                                                                                                                                                 
+CLARK      MILLER                                                                                                                                                                                                                                                                                                                                                                                               
+
+13 rows selected.
+
+SQL> 
+SQL> SPOOL OFF

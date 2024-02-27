@@ -1,0 +1,44 @@
+SQL> SET PAGES 400 LINES 400
+SQL> CREATE VIEW "5TH MAX SAL" AS
+  2  (
+  3  SELECT *
+  4  FROM (SELECT ROWNUM R1,SAL
+  5        FROM ( SELECT DISTINCT (SAL)
+  6               FROM EMP
+  7               ORDER BY SAL DESC))
+  8  WHERE R1 = 5
+  9  );
+
+View created.
+
+SQL> SELECT * FROM "5TH MAX SAL";
+
+        R1        SAL                                                                                                                                                                                                                                                                                                                                                                                           
+---------- ----------                                                                                                                                                                                                                                                                                                                                                                                           
+         5       2450                                                                                                                                                                                                                                                                                                                                                                                           
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1* SELECT * FROM 5TH MAX SAL
+SQL> /
+SELECT * FROM 5TH MAX SAL
+              *
+ERROR at line 1:
+ORA-00903: invalid table name 
+
+
+SQL> SELECT * FROM TAB;
+
+TNAME                          TABTYPE  CLUSTERID                                                                                                                                                                                                                                                                                                                                                               
+------------------------------ ------- ----------                                                                                                                                                                                                                                                                                                                                                               
+DEPT                           TABLE                                                                                                                                                                                                                                                                                                                                                                            
+EMP                            TABLE                                                                                                                                                                                                                                                                                                                                                                            
+BONUS                          TABLE                                                                                                                                                                                                                                                                                                                                                                            
+SALGRADE                       TABLE                                                                                                                                                                                                                                                                                                                                                                            
+AB                             VIEW                                                                                                                                                                                                                                                                                                                                                                             
+5TH MAX SAL                    VIEW                                                                                                                                                                                                                                                                                                                                                                             
+
+6 rows selected.
+
+SQL> SPOOL OFF

@@ -1,0 +1,385 @@
+SQL> SET LINE 200 PAGES 200
+SQL> 
+SQL> SELECT * FROM EMP;
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                   
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                   
+      7369 SMITH      CLERK           7902 17-DEC-80        800                    20                                                                                                                   
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30                                                                                                                   
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30                                                                                                                   
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                   
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30                                                                                                                   
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                   
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10                                                                                                                   
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                   
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10                                                                                                                   
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30                                                                                                                   
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20                                                                                                                   
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30                                                                                                                   
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20                                                                                                                   
+      7934 MILLER     CLERK           7782 23-JAN-82       1300                    10                                                                                                                   
+
+14 rows selected.
+
+SQL> SELECT * FROM DEPT;
+
+    DEPTNO DNAME          LOC                                                                                                                                                                           
+---------- -------------- -------------                                                                                                                                                                 
+        10 ACCOUNTING     NEW YORK                                                                                                                                                                      
+        20 RESEARCH       DALLAS                                                                                                                                                                        
+        30 SALES          CHICAGO                                                                                                                                                                       
+        40 OPERATIONS     BOSTON                                                                                                                                                                        
+
+SQL> 
+SQL> 1 QUERY
+SQL> 
+SQL> SELECT SUM (SAL),JOB
+  2  FROM EMP
+  3  GROUP BY JOB;
+
+  SUM(SAL) JOB                                                                                                                                                                                          
+---------- ---------                                                                                                                                                                                    
+      4150 CLERK                                                                                                                                                                                        
+      5600 SALESMAN                                                                                                                                                                                     
+      5000 PRESIDENT                                                                                                                                                                                    
+      8275 MANAGER                                                                                                                                                                                      
+      6000 ANALYST                                                                                                                                                                                      
+
+SQL> 
+SQL> 2 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(ENAME),HIREDATE
+  2  FROM EMP
+  3  GROUP BY HIREDATE
+  4* HAVING COUNT (ENAME) >= 3
+SQL> /
+
+no rows selected
+
+SQL> 
+SQL> 3 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(ENAME),DEPTNO,SUM(SAL)
+  2  FROM EMP
+  3  GROUP BY DEPTNO 
+  4* HAVING COUNT (ENAME) > 2 AND SUM (SAL) > 9000
+SQL> /
+
+COUNT(ENAME)     DEPTNO   SUM(SAL)                                                                                                                                                                      
+------------ ---------- ----------                                                                                                                                                                      
+           6         30       9400                                                                                                                                                                      
+           5         20      10875                                                                                                                                                                      
+
+SQL> 
+SQL> 4 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(ENAME),DEPTNO,AVG(SAL)
+  2  FROM EMP 
+  3  WHERE SAL < COMM
+  4* GROUP BY DEPTNO
+SQL> /
+
+COUNT(ENAME)     DEPTNO   AVG(SAL)                                                                                                                                                                      
+------------ ---------- ----------                                                                                                                                                                      
+           1         30       1250                                                                                                                                                                      
+
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(SAL),SAL
+  2  FROM EMP 
+  3  GROUP BY SAL
+  4* HAVING COUNT (SAL) > 1
+SQL> /
+
+COUNT(SAL)        SAL                                                                                                                                                                                   
+---------- ----------                                                                                                                                                                                   
+         2       1250                                                                                                                                                                                   
+         2       3000                                                                                                                                                                                   
+
+SQL> 
+SQL> 5 QUERY ABOVE
+SQL> 
+SQL> 
+SQL> 6 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(SAL),ENAME
+  2  FROM EMP 
+  3  GROUP BY ENAME
+  4* HAVING COUNT (ENAME) > 1
+SQL> /
+
+no rows selected
+
+SQL> 
+SQL> 7 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DEPTNO,AVG(SAL)
+  2  FROM EMP 
+  3  GROUP BY DEPTNO
+  4* HAVING AVG(SAL) BETWEEN 2500 AND 3000
+SQL> /
+
+    DEPTNO   AVG(SAL)                                                                                                                                                                                   
+---------- ----------                                                                                                                                                                                   
+        10 2916.66667                                                                                                                                                                                   
+
+SQL> 
+SQL> 8 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(ENAME),DEPTNO
+  2  FROM EMP 
+  3  WHERE JOB IN ('MANAGER','ANALYST') AND SAL*12 LIKE '%0'
+  4* GROUP BY DEPTNO
+SQL> /
+
+COUNT(ENAME)     DEPTNO                                                                                                                                                                                 
+------------ ----------                                                                                                                                                                                 
+           1         30                                                                                                                                                                                 
+           3         20                                                                                                                                                                                 
+           1         10                                                                                                                                                                                 
+
+SQL> 
+SQL> 9 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(JOB),DEPTNO
+  2  FROM EMP 
+  3  WHERE JOB = 'CLERK'  
+  4* GROUP BY DEPTNO
+SQL> /
+
+COUNT(JOB)     DEPTNO                                                                                                                                                                                   
+---------- ----------                                                                                                                                                                                   
+         1         30                                                                                                                                                                                   
+         2         20                                                                                                                                                                                   
+         1         10                                                                                                                                                                                   
+
+SQL> 
+SQL> 10 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT MAX(SAL),DEPTNO
+  2  FROM EMP 
+  3  WHERE JOB = 'MANAGER'  
+  4* GROUP BY DEPTNO
+SQL> /
+
+  MAX(SAL)     DEPTNO                                                                                                                                                                                   
+---------- ----------                                                                                                                                                                                   
+      2850         30                                                                                                                                                                                   
+      2975         20                                                                                                                                                                                   
+      2450         10                                                                                                                                                                                   
+
+SQL> 
+SQL> 11 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT  SAL, COUNT (SAL)
+  2  FROM EMP   
+  3  GROUP BY SAL
+  4* HAVING COUNT(SAL) > 1
+SQL> /
+
+       SAL COUNT(SAL)                                                                                                                                                                                   
+---------- ----------                                                                                                                                                                                   
+      1250          2                                                                                                                                                                                   
+      3000          2                                                                                                                                                                                   
+
+SQL> 
+SQL> 12 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT  DEPTNO, COUNT (ENAME)
+  2  FROM EMP
+  3  WHERE DEPTNO NOT IN (10)   
+  4* GROUP BY DEPTNO
+SQL> /
+
+    DEPTNO COUNT(ENAME)                                                                                                                                                                                 
+---------- ------------                                                                                                                                                                                 
+        30            6                                                                                                                                                                                 
+        20            5                                                                                                                                                                                 
+
+SQL> 
+SQL> 13 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT  DEPTNO, COUNT (ENAME)
+  2  FROM EMP
+  3  WHERE SAL > 1600 AND JOB NOT IN ('MANAGER')  
+  4* GROUP BY DEPTNO
+SQL> /
+
+    DEPTNO COUNT(ENAME)                                                                                                                                                                                 
+---------- ------------                                                                                                                                                                                 
+        20            2                                                                                                                                                                                 
+        10            1                                                                                                                                                                                 
+
+SQL> 
+SQL> 14 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT  AVG(SAL),JOB
+  2  FROM EMP
+  3  WHERE MGR IS NOT NULL 
+  4* GROUP BY JOB
+SQL> /
+
+  AVG(SAL) JOB                                                                                                                                                                                          
+---------- ---------                                                                                                                                                                                    
+    1037.5 CLERK                                                                                                                                                                                        
+      1400 SALESMAN                                                                                                                                                                                     
+2758.33333 MANAGER                                                                                                                                                                                      
+      3000 ANALYST                                                                                                                                                                                      
+
+SQL> 
+SQL> 13 QUERY => 14 QUERY
+SQL> 14 QUERY => 15 QUERY
+SQL> 
+SQL> 15 QUERY => 13 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DEPTNO, COUNT(ENAME)
+  2  FROM EMP
+  3  WHERE COMM IS NOT NULL 
+  4* GROUP BY DEPTNO
+SQL> /
+
+    DEPTNO COUNT(ENAME)                                                                                                                                                                                 
+---------- ------------                                                                                                                                                                                 
+        30            4                                                                                                                                                                                 
+
+SQL> 
+SQL> 16 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(ENAME),DEPTNO,HIREDATE
+  2  FROM EMP
+  3  GROUP BY DEPTNO,HIREDATE
+  4* HAVING COUNT(*) > 1
+SQL> /
+
+no rows selected
+
+SQL> 
+SQL> 17 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(ENAME),DEPTNO,SAL
+  2  FROM EMP
+  3  GROUP BY DEPTNO,SAL
+  4* HAVING COUNT(*) > 1
+SQL> /
+
+COUNT(ENAME)     DEPTNO        SAL                                                                                                                                                                      
+------------ ---------- ----------                                                                                                                                                                      
+           2         30       1250                                                                                                                                                                      
+           2         20       3000                                                                                                                                                                      
+
+SQL> 
+SQL> 18 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT MAX(SAL),JOB
+  2  FROM EMP
+  3  WHERE JOB NOT LIKE 'K%'
+  4* GROUP BY JOB
+SQL> /
+
+  MAX(SAL) JOB                                                                                                                                                                                          
+---------- ---------                                                                                                                                                                                    
+      1300 CLERK                                                                                                                                                                                        
+      1600 SALESMAN                                                                                                                                                                                     
+      5000 PRESIDENT                                                                                                                                                                                    
+      2975 MANAGER                                                                                                                                                                                      
+      3000 ANALYST                                                                                                                                                                                      
+
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT MAX(SAL),JOB
+  2  FROM EMP
+  3  WHERE ENAME NOT LIKE 'K%'
+  4* GROUP BY JOB
+SQL> /
+
+  MAX(SAL) JOB                                                                                                                                                                                          
+---------- ---------                                                                                                                                                                                    
+      1300 CLERK                                                                                                                                                                                        
+      1600 SALESMAN                                                                                                                                                                                     
+      2975 MANAGER                                                                                                                                                                                      
+      3000 ANALYST                                                                                                                                                                                      
+
+SQL> 
+SQL> 19 QUERY
+SQL> 
+SQL> SELECT ENAME
+  2  FROM EMP
+  3  WHERE MGR = 7839;
+
+ENAME                                                                                                                                                                                                   
+----------                                                                                                                                                                                              
+JONES                                                                                                                                                                                                   
+BLAKE                                                                                                                                                                                                   
+CLARK                                                                                                                                                                                                   
+
+SQL> 
+SQL> 20 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(ENAME),DEPTNO
+  2  FROM EMP
+  3  WHERE ENAME LIKE 'A%' OR ENAME LIKE 'E%' OR ENAME LIKE 'I%' OR 
+  4        ENAME LIKE 'O%' OR ENAME LIKE 'U%' 
+  5* GROUP BY DEPTNO
+SQL> /
+
+COUNT(ENAME)     DEPTNO                                                                                                                                                                                 
+------------ ----------                                                                                                                                                                                 
+           1         30                                                                                                                                                                                 
+           1         20                                                                                                                                                                                 
+
+SQL> SPOOL OFF

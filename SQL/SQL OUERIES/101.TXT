@@ -1,0 +1,1002 @@
+SQL> SET PAGES 400 LINES 400
+SQL> 
+SQL> 101 QUERY
+SQL> 
+SQL> SELECT DEPTNO,JOB,SUM(SAL)
+  2  FROM EMP
+  3  WHERE DEPTNO IN (10,20)
+  4  HAVING SUM(SAL) < 10000;
+SELECT DEPTNO,JOB,SUM(SAL)
+       *
+ERROR at line 1:
+ORA-00937: not a single-group group function 
+
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DEPTNO,JOB,SUM(SAL)
+  2  FROM EMP
+  3  WHERE DEPTNO IN (10,20)
+  4  GROUP BY DEPTNO,JOB
+  5* HAVING SUM(SAL) < 10000
+SQL> /
+
+    DEPTNO JOB         SUM(SAL)                                                                                                                                                                                                                                                                                                                                                                                 
+---------- --------- ----------                                                                                                                                                                                                                                                                                                                                                                                 
+        20 CLERK           1900                                                                                                                                                                                                                                                                                                                                                                                 
+        20 MANAGER         2975                                                                                                                                                                                                                                                                                                                                                                                 
+        10 PRESIDENT       5000                                                                                                                                                                                                                                                                                                                                                                                 
+        10 CLERK           1300                                                                                                                                                                                                                                                                                                                                                                                 
+        10 MANAGER         2450                                                                                                                                                                                                                                                                                                                                                                                 
+        20 ANALYST         6000                                                                                                                                                                                                                                                                                                                                                                                 
+
+6 rows selected.
+
+SQL> 
+SQL> 102 QUERY
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT AVG(SAL) ,DEPTNO
+  2   FROM EMP
+  3   WHERE MGR IS NULL
+  4*  GROUP BY DEPTNO
+SQL> /
+
+  AVG(SAL)     DEPTNO                                                                                                                                                                                                                                                                                                                                                                                           
+---------- ----------                                                                                                                                                                                                                                                                                                                                                                                           
+      5000         10                                                                                                                                                                                                                                                                                                                                                                                           
+
+SQL> 
+SQL> 103 QUERY
+SQL> ED
+Wrote file afiedt.buf
+
+  1   SELECT DEPTNO, MAX(SAL),MIN(SAL),SUM(SAL),AVG(SAL),MAX(COMM),MIN(COMM),AVG(COMM)
+  2  FROM EMP 
+  3  WHERE HIREDATE BETWEEN '1-JAN-1980' AND '31-DEC-1985'
+  4* GROUP BY DEPTNO
+SQL> /
+
+    DEPTNO   MAX(SAL)   MIN(SAL)   SUM(SAL)   AVG(SAL)  MAX(COMM)  MIN(COMM)  AVG(COMM)                                                                                                                                                                                                                                                                                                                         
+---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                         
+        30       2850        950       9400 1566.66667       1400          0        550                                                                                                                                                                                                                                                                                                                         
+        20       3000        800       6775 2258.33333                                                                                                                                                                                                                                                                                                                                                          
+        10       5000       1300       8750 2916.66667                                                                                                                                                                                                                                                                                                                                                          
+
+SQL> 
+SQL> 104 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT MAX(SAL),SUM(SAL)
+  2  FROM EMP
+  3  WHERE ENAME NOT LIKE '_%'
+  4  GROUP BY SAL,DEPTNO
+  5*  HAVING SUM(SAL)!=5000 AND SUM(SAL)<=9000
+SQL> /
+
+no rows selected
+
+SQL> 
+SQL> 105 QUERY
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM EMP
+  3  WHERE JOB =(SELECT JOB
+  4              FROM EMP
+  5*             WHERE ENAME LIKE'MARTIN');
+SQL> /
+            WHERE ENAME LIKE'MARTIN');
+                                     *
+ERROR at line 5:
+ORA-00911: invalid character 
+
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM EMP
+  3  WHERE JOB =(SELECT JOB
+  4              FROM EMP
+  5*             WHERE ENAME LIKE'MARTIN')
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                                                                                                                           
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                           
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30                                                                                                                                                                                                                                                                                                                           
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30                                                                                                                                                                                                                                                                                                                           
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30                                                                                                                                                                                                                                                                                                                           
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30                                                                                                                                                                                                                                                                                                                           
+
+SQL> 
+SQL> 106 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM EMP
+  3  WHERE HIREDATE>(SELECT HIREDATE
+  4                  FROM EMP
+  5*                WHERE ENAME LIKE'MILLER')
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                                                                                                                           
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                           
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                                                                                                                                                                                                                           
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20                                                                                                                                                                                                                                                                                                                           
+
+SQL> 
+SQL> 107 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2   FROM EMP
+  3  WHERE SAL >(SELECT SAL
+  4              FROM EMP
+  5              WHERE ENAME = 'ADAMS') AND SAL<(SELECT SAL
+  6                                                 FROM EMP
+  7*                                                WHERE ENAME = 'SCOTT')
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                                                                                                                           
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                           
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30                                                                                                                                                                                                                                                                                                                           
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30                                                                                                                                                                                                                                                                                                                           
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                                                                                                                                                                                                                           
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30                                                                                                                                                                                                                                                                                                                           
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                                                                                                                                                                                                                           
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10                                                                                                                                                                                                                                                                                                                           
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30                                                                                                                                                                                                                                                                                                                           
+      7934 MILLER     CLERK           7782 23-JAN-82       1300                    10                                                                                                                                                                                                                                                                                                                           
+
+8 rows selected.
+
+SQL> 108 QUERY
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME ,SAL*12
+  2  FROM EMP
+  3* WHERE JOB = 'NETWORK'
+SQL> /
+
+no rows selected
+
+SQL> 
+SQL> 109 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT * 
+  2  FROM EMP
+  3  WHERE DEPTNO IN (SELECT DEPTNO
+  4                   FROM EMP
+  5*                  WHERE ENAME IN ('ALLEN','SMITH') )
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                                                                                                                           
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                           
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20                                                                                                                                                                                                                                                                                                                           
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20                                                                                                                                                                                                                                                                                                                           
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                                                                                                                                                                                                                           
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                                                                                                                                                                                                                           
+      7369 SMITH      CLERK           7902 17-DEC-80        800                    20                                                                                                                                                                                                                                                                                                                           
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30                                                                                                                                                                                                                                                                                                                           
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30                                                                                                                                                                                                                                                                                                                           
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                                                                                                                                                                                                                           
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30                                                                                                                                                                                                                                                                                                                           
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30                                                                                                                                                                                                                                                                                                                           
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30                                                                                                                                                                                                                                                                                                                           
+
+11 rows selected.
+
+SQL> 
+SQL> 110 QUERY
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM EMP
+  3  WHERE SAL> ( SELECT SAL
+  4               FROM EMP
+  5*              WHERE ENAME='ALLEN')
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                                                                                                                           
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                           
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                                                                                                                                                                                                                           
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                                                                                                                                                                                                                           
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10                                                                                                                                                                                                                                                                                                                           
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                                                                                                                                                                                                                           
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10                                                                                                                                                                                                                                                                                                                           
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20                                                                                                                                                                                                                                                                                                                           
+
+6 rows selected.
+
+SQL> 
+SQL> 111 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME
+  2  FROM DEPT
+  3  WHERE DEPTNO IN(SELECT DEPTNO
+  4                  ROM EMP
+  5*                 WHERE JOB IN 'ANALYST')
+SQL> /
+                ROM EMP
+                    *
+ERROR at line 4:
+ORA-00923: FROM keyword not found where expected 
+
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME
+  2  FROM DEPT
+  3  WHERE DEPTNO IN(SELECT DEPTNO
+  4                  FROM EMP
+  5*                 WHERE JOB IN 'ANALYST')
+SQL> /
+
+DNAME                                                                                                                                                                                                                                                                                                                                                                                                           
+--------------                                                                                                                                                                                                                                                                                                                                                                                                  
+RESEARCH                                                                                                                                                                                                                                                                                                                                                                                                        
+
+SQL> 112 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME
+  2  FROM DEPT
+  3  WHERE DEPTNO IN ( SELECT DEPTNO
+  4                    FROM EMP
+  5*                   WHERE JOB='SALESMAN')
+SQL> /
+
+DNAME                                                                                                                                                                                                                                                                                                                                                                                                           
+--------------                                                                                                                                                                                                                                                                                                                                                                                                  
+SALES                                                                                                                                                                                                                                                                                                                                                                                                           
+
+SQL> 
+SQL> 113 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME
+  2  FROM EMP
+  3  WHERE DEPTNO IN (SELECT DEPTNO
+  4                   FROM DEPT
+  5*                  WHERE LOC LIKE '%O%')
+SQL> /
+
+ENAME                                                                                                                                                                                                                                                                                                                                                                                                           
+----------                                                                                                                                                                                                                                                                                                                                                                                                      
+ALLEN                                                                                                                                                                                                                                                                                                                                                                                                           
+WARD                                                                                                                                                                                                                                                                                                                                                                                                            
+MARTIN                                                                                                                                                                                                                                                                                                                                                                                                          
+BLAKE                                                                                                                                                                                                                                                                                                                                                                                                           
+CLARK                                                                                                                                                                                                                                                                                                                                                                                                           
+KING                                                                                                                                                                                                                                                                                                                                                                                                            
+TURNER                                                                                                                                                                                                                                                                                                                                                                                                          
+JAMES                                                                                                                                                                                                                                                                                                                                                                                                           
+MILLER                                                                                                                                                                                                                                                                                                                                                                                                          
+
+9 rows selected.
+
+SQL> 
+SQL> 114 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME
+  2  FROM DEPT
+  3  WHERE DEPTNO IN (SELECT DEPTNO
+  4                   FROM EMP
+  5                   GROUP BY DEPTNO
+  6*                  HAVING COUNT(*)>1)
+SQL> /
+
+DNAME                                                                                                                                                                                                                                                                                                                                                                                                           
+--------------                                                                                                                                                                                                                                                                                                                                                                                                  
+SALES                                                                                                                                                                                                                                                                                                                                                                                                           
+RESEARCH                                                                                                                                                                                                                                                                                                                                                                                                        
+ACCOUNTING                                                                                                                                                                                                                                                                                                                                                                                                      
+
+SQL> 
+SQL> 115 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME
+  2  FROM DEPT
+  3  WHERE DEPTNO IN(SELECT DEPTNO
+  4                  FROM EMP
+  5                  GROUP BY DEPTNO
+  6*                 HAVING COUNT (*)>=4)
+SQL> /
+
+DNAME                                                                                                                                                                                                                                                                                                                                                                                                           
+--------------                                                                                                                                                                                                                                                                                                                                                                                                  
+SALES                                                                                                                                                                                                                                                                                                                                                                                                           
+RESEARCH                                                                                                                                                                                                                                                                                                                                                                                                        
+
+SQL> 
+SQL> 116 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME
+  2  FROM DEPT
+  3  WHERE DEPTNO IN(SELECT DEPTNO
+  4                  FROM EMP
+  5                  GROUP BY DEPTNO,JOB
+  6                  HAVING COUNT(JOB)>=2 AND JOB IN (SELECT JOB
+  7                                                   FROM EMP
+  8*                                                  WHERE JOB='CLERK'))
+SQL> /
+
+DNAME                                                                                                                                                                                                                                                                                                                                                                                                           
+--------------                                                                                                                                                                                                                                                                                                                                                                                                  
+RESEARCH                                                                                                                                                                                                                                                                                                                                                                                                        
+
+SQL> 
+SQL> 117 QUERY
+SQL> 
+SQL> SELECT DNAME
+  2  FROM DEPT
+  3  WHERE NOT EXIST (SELECT DEPTNO
+  4                   FROM EMP
+  5                   WHERE EMP,DEPTNO = DEPT,DEPTNO);
+WHERE NOT EXIST (SELECT DEPTNO
+                 *
+ERROR at line 3:
+ORA-00936: missing expression 
+
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME
+  2  FROM DEPT
+  3  WHERE DEPTNO NOT EXIST (SELECT DEPTNO
+  4                   FROM EMP
+  5*                  WHERE EMP,DEPTNO = DEPT,DEPTNO)
+SQL> /
+WHERE DEPTNO NOT EXIST (SELECT DEPTNO
+                 *
+ERROR at line 3:
+ORA-00920: invalid relational operator 
+
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME
+  2  FROM DEPT
+  3  WHERE NOT EXIST DEPTNO (SELECT DEPTNO
+  4                   FROM EMP
+  5*                  WHERE EMP,DEPTNO = DEPT,DEPTNO)
+SQL> /
+WHERE NOT EXIST DEPTNO (SELECT DEPTNO
+                *
+ERROR at line 3:
+ORA-00920: invalid relational operator 
+
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME
+  2  FROM DEPT
+  3  WHERE NOT EXIST (SELECT DEPTNO
+  4                   FROM EMP
+  5*                  WHERE EMP.DEPTNO = DEPT.DEPTNO)
+SQL> /
+WHERE NOT EXIST (SELECT DEPTNO
+                 *
+ERROR at line 3:
+ORA-00936: missing expression 
+
+
+SQL> 118 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME
+  2  FROM EMP
+  3  WHERE JOB=(SELECT JOB
+  4             FROM EMP
+  5*            WHERE ENAME = 'SCOTT')
+SQL> /
+
+ENAME                                                                                                                                                                                                                                                                                                                                                                                                           
+----------                                                                                                                                                                                                                                                                                                                                                                                                      
+SCOTT                                                                                                                                                                                                                                                                                                                                                                                                           
+FORD                                                                                                                                                                                                                                                                                                                                                                                                            
+
+SQL> 117 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1   SELECT DNAME
+  2   FROM DEPT
+  3   WHERE NOT EXISTS (SELECT DEPTNO
+  4*                   FROM EMP
+SQL> /
+                  FROM EMP
+                         *
+ERROR at line 4:
+ORA-00907: missing right parenthesis 
+
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1   SELECT DNAME
+  2   FROM DEPT
+  3   WHERE NOT EXISTS (SELECT DEPTNO
+  4*                   FROM EMP)
+SQL> /
+
+no rows selected
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME
+  2  FROM DEPT
+  3  WHERE NOT EXISTS (SELECT DEPTNO
+  4                   FROM EMP
+  5*                  WHERE EMP.DEPTNO = DEPT.DEPTNO)
+SQL> /
+
+DNAME                                                                                                                                                                                                                                                                                                                                                                                                           
+--------------                                                                                                                                                                                                                                                                                                                                                                                                  
+OPERATIONS                                                                                                                                                                                                                                                                                                                                                                                                      
+
+SQL> 
+SQL> 119 QUERY
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM EMP
+  3  WHERE EMPNO =(SELECT MGR
+  4                FROM EMP
+  5*               WHERE ENAME ='SCOTT')
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                                                                                                                           
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                           
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                                                                                                                                                                                                                           
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME
+  2  FROM DEPT
+  3  WHERE DEPTNO IN (SELECT DEPTNO
+  4                   FROM EMP
+  5                   WHERE EMPNO =(SELECT MGR
+  6                                 FROM EMP
+  7*                                WHERE ENAME ='SCOTT'))
+SQL> /
+
+DNAME                                                                                                                                                                                                                                                                                                                                                                                                           
+--------------                                                                                                                                                                                                                                                                                                                                                                                                  
+RESEARCH                                                                                                                                                                                                                                                                                                                                                                                                        
+
+SQL> 
+SQL> 120 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME
+  2  FROM EMP
+  3  WHERE JOB=(SELECT JOB
+  4             FROM EMP
+  5             WHERE ENAME = 'SCOTT') AND SAL>(SELECT SAL
+  6                                               FROM EMP
+  7*                                              WHERE ENAME = 'SMITH');
+SQL> /
+                                             WHERE ENAME = 'SMITH');
+                                                                   *
+ERROR at line 7:
+ORA-00911: invalid character 
+
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME
+  2  FROM EMP
+  3  WHERE JOB=(SELECT JOB
+  4             FROM EMP
+  5             WHERE ENAME = 'SCOTT') AND SAL>(SELECT SAL
+  6                                               FROM EMP
+  7*                                              WHERE ENAME = 'SMITH')
+SQL> /
+
+ENAME                                                                                                                                                                                                                                                                                                                                                                                                           
+----------                                                                                                                                                                                                                                                                                                                                                                                                      
+SCOTT                                                                                                                                                                                                                                                                                                                                                                                                           
+FORD                                                                                                                                                                                                                                                                                                                                                                                                            
+
+SQL> 
+SQL> 121 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM EMP
+  3* WHERE JOB='MANAGER'
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                                                                                                                           
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                           
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                                                                                                                                                                                                                           
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                                                                                                                                                                                                                           
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10                                                                                                                                                                                                                                                                                                                           
+
+SQL> 
+SQL> 122 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM EMP
+  3  WHERE MGR IN ( SELECT EMPNO
+  4                 FROM EMP
+  5*                WHERE ENAME='SCOTT')
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                                                                                                                           
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                           
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20                                                                                                                                                                                                                                                                                                                           
+
+SQL> 
+SQL> 123 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM EMP
+  3  WHERE JOB IN ( SELECT JOB
+  4                 FROM EMP
+  5*                WHERE ENAME IN ('SCOTT','ALLEN'))
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                                                                                                                           
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                           
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30                                                                                                                                                                                                                                                                                                                           
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30                                                                                                                                                                                                                                                                                                                           
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30                                                                                                                                                                                                                                                                                                                           
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30                                                                                                                                                                                                                                                                                                                           
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20                                                                                                                                                                                                                                                                                                                           
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                                                                                                                                                                                                                           
+
+6 rows selected.
+
+SQL> 
+SQL> 124 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT MAX(SAL)
+  2  FROM EMP
+  3  WHERE SAL < ( SELECT MAX(SAL)
+  4*               FROM EMP)
+SQL> /
+
+  MAX(SAL)                                                                                                                                                                                                                                                                                                                                                                                                      
+----------                                                                                                                                                                                                                                                                                                                                                                                                      
+      3000                                                                                                                                                                                                                                                                                                                                                                                                      
+
+SQL> 
+SQL> 125 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT MAX(SAL)
+  2  FROM EMP
+  3  WHERE SAL < ( SELECT MAX(SAL)
+  4                FROM EMP
+  5                WHERE SAL< (SELECT MAX(SAL)
+  6*                           FROM EMP))
+SQL> /
+
+  MAX(SAL)                                                                                                                                                                                                                                                                                                                                                                                                      
+----------                                                                                                                                                                                                                                                                                                                                                                                                      
+      2975                                                                                                                                                                                                                                                                                                                                                                                                      
+
+SQL> 
+SQL> 126 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM EMP
+  3  WHERE SAL >ANY(SELECT SAL
+  4                 FROM EMP
+  5*                WHERE JOB='MANAGER')
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                                                                                                                           
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                           
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10                                                                                                                                                                                                                                                                                                                           
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20                                                                                                                                                                                                                                                                                                                           
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                                                                                                                                                                                                                           
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20                                                                                                                                                                                                                                                                                                                           
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30                                                                                                                                                                                                                                                                                                                           
+
+SQL> 
+SQL> 127 QUERY
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM EMP
+  3  WHERE SAL >ALL(SELECT SAL
+  4                 FROM EMP
+  5*                WHERE JOB='MANAGER')
+SQL> /
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO                                                                                                                                                                                                                                                                                                                           
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------                                                                                                                                                                                                                                                                                                                           
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20                                                                                                                                                                                                                                                                                                                           
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10                                                                                                                                                                                                                                                                                                                           
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20                                                                                                                                                                                                                                                                                                                           
+
+SQL> 
+SQL> 128 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT EMPNO,JOB,SAL
+  2  FROM EMP
+  3  WHERE JOB='ANALYST' AND SAL >ANY(SELECT SAL
+  4                                   FROM EMP
+  5*                                  WHERE JOB='MANAGER')
+SQL> /
+
+     EMPNO JOB              SAL                                                                                                                                                                                                                                                                                                                                                                                 
+---------- --------- ----------                                                                                                                                                                                                                                                                                                                                                                                 
+      7902 ANALYST         3000                                                                                                                                                                                                                                                                                                                                                                                 
+      7788 ANALYST         3000                                                                                                                                                                                                                                                                                                                                                                                 
+
+SQL> 
+SQL> 129 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DNAME,LOC
+  2  FROM DEPT
+  3  WHERE DEPTNO IN (SELECT DEPTNO
+  4                   FROM EMP
+  5                   WHERE MGR IN (SELECT EMPNO
+  6                                FROM EMP
+  7*                               WHERE ENAME='CLARK'))
+SQL> /
+
+DNAME          LOC                                                                                                                                                                                                                                                                                                                                                                                              
+-------------- -------------                                                                                                                                                                                                                                                                                                                                                                                    
+ACCOUNTING     NEW YORK                                                                                                                                                                                                                                                                                                                                                                                         
+
+SQL> 
+SQL> 130 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME,EMPNO,DNAME,LOC,SAL*12 ANNUAL_SAL
+  2  FROM EMP ,DEPT
+  3  WHERE EMP.DEPTNO=DEPT.DEPTNO AND JOB IN ('SALESMAN','CLARK') AND 
+  4*                              LOC IN('NEW YORK','CHICAGO','BOSTON')
+SQL> /
+
+ENAME           EMPNO DNAME          LOC           ANNUAL_SAL                                                                                                                                                                                                                                                                                                                                                   
+---------- ---------- -------------- ------------- ----------                                                                                                                                                                                                                                                                                                                                                   
+ALLEN            7499 SALES          CHICAGO            19200                                                                                                                                                                                                                                                                                                                                                   
+WARD             7521 SALES          CHICAGO            15000                                                                                                                                                                                                                                                                                                                                                   
+MARTIN           7654 SALES          CHICAGO            15000                                                                                                                                                                                                                                                                                                                                                   
+TURNER           7844 SALES          CHICAGO            18000                                                                                                                                                                                                                                                                                                                                                   
+
+SQL> 
+SQL> 131 QUERY
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME ,DEPT.DEPTNO , DNAME, LOC,SAL+SAL*0.35 HIKE
+  2  FROM EMP ,DEPT
+  3  WHERE EMP.DEPTNO=DEPT.DEPTNO AND LOC IN ('NEW YORK','CHICAGO') AND
+  4                                   SAL > ( SELECT SAL
+  5                                           FROM EMP
+  6*                                          WHERE ENAME = 'ALLEN')
+SQL> /
+
+ENAME          DEPTNO DNAME          LOC                 HIKE                                                                                                                                                                                                                                                                                                                                                   
+---------- ---------- -------------- ------------- ----------                                                                                                                                                                                                                                                                                                                                                   
+BLAKE              30 SALES          CHICAGO           3847.5                                                                                                                                                                                                                                                                                                                                                   
+CLARK              10 ACCOUNTING     NEW YORK          3307.5                                                                                                                                                                                                                                                                                                                                                   
+KING               10 ACCOUNTING     NEW YORK            6750                                                                                                                                                                                                                                                                                                                                                   
+
+SQL> 
+SQL> 132 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME,DNAME
+  2  FROM EMP,DEPT
+  3* WHERE EMP.DEPTNO =DEPT.DEPTNO AND ENAME LIKE '%E_' AND DNAME LIKE'%O%'
+SQL> /
+
+ENAME      DNAME                                                                                                                                                                                                                                                                                                                                                                                                
+---------- --------------                                                                                                                                                                                                                                                                                                                                                                                       
+MILLER     ACCOUNTING                                                                                                                                                                                                                                                                                                                                                                                           
+
+SQL> 
+SQL> 133 QUERY
+SQL> 
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME,DNAME
+  2  FROM EMP,DEPT
+  3  WHERE EMP.DEPTNO =DEPT.DEPTNO AND ENAME LIKE '%E_' AND DNAME LIKE'%O%'
+  4* QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME , JOB , DNAME, LOC
+  2  FROM DEPT, EMP
+  3* WHERE EMP.DEPTNO = DEPT.DEPTNO AND DNAME IN ('ACCOUNTS','SALES') AND JOB IN ('MANAGERS','CLERKS')
+SQL> /
+
+no rows selected
+
+SQL> 
+SQL> 134 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME, DNAME
+  2  FROM EMP , DEPT
+  3  WHERE EMP. DEPTNO = DEPT.DEPTNO AND JOB = 'SALESMAN' AND LOC NOT IN
+  4* ('DALLAS')
+SQL> /
+
+ENAME      DNAME                                                                                                                                                                                                                                                                                                                                                                                                
+---------- --------------                                                                                                                                                                                                                                                                                                                                                                                       
+ALLEN      SALES                                                                                                                                                                                                                                                                                                                                                                                                
+WARD       SALES                                                                                                                                                                                                                                                                                                                                                                                                
+MARTIN     SALES                                                                                                                                                                                                                                                                                                                                                                                                
+TURNER     SALES                                                                                                                                                                                                                                                                                                                                                                                                
+
+SQL> 
+SQL> 
+SQL> 135 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME,DNAME
+  2  FROM EMP,DEPT
+  3* WHERE EMP.DEPTNO =DEPT.DEPTNO AND ENAME LIKE '%E_' AND DNAME LIKE'%O%'
+SQL> /
+
+ENAME      DNAME                                                                                                                                                                                                                                                                                                                                                                                                
+---------- --------------                                                                                                                                                                                                                                                                                                                                                                                       
+MILLER     ACCOUNTING                                                                                                                                                                                                                                                                                                                                                                                           
+
+SQL> 
+SQL> 136 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1   SELECT ENAME, JOB, DNAME , LOC
+  2  FROM EMP, DEPT
+  3   WHERE EMP.DEPTNO = DEPT.DEPTNO AND JOB IN ('MANAGER', 'CLERKS') AND
+  4* DNAME IN ('SALES' , 'ACCOUNTS')
+SQL> /
+
+ENAME      JOB       DNAME          LOC                                                                                                                                                                                                                                                                                                                                                                         
+---------- --------- -------------- -------------                                                                                                                                                                                                                                                                                                                                                               
+BLAKE      MANAGER   SALES          CHICAGO                                                                                                                                                                                                                                                                                                                                                                     
+
+SQL> 
+SQL> 137 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME , LOC
+  2  FROM EMP , DEPT
+  3* WHERE EMP. DEPTNO = DEPT. DEPTNO AND LOC NOT IN ( 'DALLAS')
+SQL> /
+
+ENAME      LOC                                                                                                                                                                                                                                                                                                                                                                                                  
+---------- -------------                                                                                                                                                                                                                                                                                                                                                                                        
+ALLEN      CHICAGO                                                                                                                                                                                                                                                                                                                                                                                              
+WARD       CHICAGO                                                                                                                                                                                                                                                                                                                                                                                              
+MARTIN     CHICAGO                                                                                                                                                                                                                                                                                                                                                                                              
+BLAKE      CHICAGO                                                                                                                                                                                                                                                                                                                                                                                              
+CLARK      NEW YORK                                                                                                                                                                                                                                                                                                                                                                                             
+KING       NEW YORK                                                                                                                                                                                                                                                                                                                                                                                             
+TURNER     CHICAGO                                                                                                                                                                                                                                                                                                                                                                                              
+JAMES      CHICAGO                                                                                                                                                                                                                                                                                                                                                                                              
+MILLER     NEW YORK                                                                                                                                                                                                                                                                                                                                                                                             
+
+9 rows selected.
+
+SQL> 
+SQL> 138 QUERY
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME , LOC
+  2  FROM EMP , DEPT
+  3  WHERE EMP. DEPTNO = DEPT. DEPTNO AND LOC IN ( 'DALLAS')
+  4* QUERY
+SQL> /
+QUERY
+*
+ERROR at line 4:
+ORA-00933: SQL command not properly ended 
+
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME , LOC
+  2  FROM EMP , DEPT
+  3* WHERE EMP. DEPTNO = DEPT. DEPTNO AND LOC IN ( 'DALLAS')
+  4  /
+
+ENAME      LOC                                                                                                                                                                                                                                                                                                                                                                                                  
+---------- -------------                                                                                                                                                                                                                                                                                                                                                                                        
+SMITH      DALLAS                                                                                                                                                                                                                                                                                                                                                                                               
+JONES      DALLAS                                                                                                                                                                                                                                                                                                                                                                                               
+SCOTT      DALLAS                                                                                                                                                                                                                                                                                                                                                                                               
+ADAMS      DALLAS                                                                                                                                                                                                                                                                                                                                                                                               
+FORD       DALLAS                                                                                                                                                                                                                                                                                                                                                                                               
+
+SQL> 
+SQL> 139 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT E2.ENAME , DNAME , LOC
+  2  FROM EMP E1, EMP E2,DEPT
+  3  WHERE E2.DEPTNO = DEPT.DEPTNO AND E1.EMPNO=E2.MGR AND
+  4* E1.ENAME='CLARK'
+SQL> /
+
+ENAME      DNAME          LOC                                                                                                                                                                                                                                                                                                                                                                                   
+---------- -------------- -------------                                                                                                                                                                                                                                                                                                                                                                         
+MILLER     ACCOUNTING     NEW YORK                                                                                                                                                                                                                                                                                                                                                                              
+
+SQL> 
+SQL> 140 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT ENAME, DEPT.*
+  2  FROM EMP, DEPT
+  3* WHERE EMP.DEPTNO=DEPT.DEPTNO AND JOB='MANAGER'
+SQL> /
+
+ENAME          DEPTNO DNAME          LOC                                                                                                                                                                                                                                                                                                                                                                        
+---------- ---------- -------------- -------------                                                                                                                                                                                                                                                                                                                                                              
+JONES              20 RESEARCH       DALLAS                                                                                                                                                                                                                                                                                                                                                                     
+BLAKE              30 SALES          CHICAGO                                                                                                                                                                                                                                                                                                                                                                    
+CLARK              10 ACCOUNTING     NEW YORK                                                                                                                                                                                                                                                                                                                                                                   
+
+SQL> 
+SQL> 141 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DEPTNO
+  2  FROM EMP
+  3* WHERE ENAME IS  NULL
+SQL> /
+
+no rows selected
+
+SQL> SELECT DEPTNO
+  2  FROM DEPT
+  3  WHERE NOT EXISTS ( SELECT DEPTNO
+  4                     FROM EMP
+  5                     WHERE EMP.DEPTNO = DEPT.DEPTNO);
+
+    DEPTNO                                                                                                                                                                                                                                                                                                                                                                                                      
+----------                                                                                                                                                                                                                                                                                                                                                                                                      
+        40                                                                                                                                                                                                                                                                                                                                                                                                      
+
+SQL> 
+SQL> 142 QUERY
+SQL> 
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT DEPTNO
+  2  FROM DEPT
+  3  WHERE EXISTS ( SELECT DEPTNO
+  4                     FROM EMP
+  5*                    WHERE EMP.DEPTNO = DEPT.DEPTNO)
+  6  /
+
+    DEPTNO                                                                                                                                                                                                                                                                                                                                                                                                      
+----------                                                                                                                                                                                                                                                                                                                                                                                                      
+        10                                                                                                                                                                                                                                                                                                                                                                                                      
+        20                                                                                                                                                                                                                                                                                                                                                                                                      
+        30                                                                                                                                                                                                                                                                                                                                                                                                      
+
+SQL> 
+SQL> 143 QUERY
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(DEPTNO)
+  2  FROM DEPT
+  3  WHERE EXISTS ( SELECT DEPTNO
+  4                     FROM EMP
+  5                     WHERE EMP.DEPTNO = DEPT.DEPTNO)
+  6* GROUP BY DEPTNO
+  7  /
+
+COUNT(DEPTNO)                                                                                                                                                                                                                                                                                                                                                                                                   
+-------------                                                                                                                                                                                                                                                                                                                                                                                                   
+            1                                                                                                                                                                                                                                                                                                                                                                                                   
+            1                                                                                                                                                                                                                                                                                                                                                                                                   
+            1                                                                                                                                                                                                                                                                                                                                                                                                   
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1  SELECT COUNT(DEPTNO)
+  2  FROM DEPT
+  3  WHERE EXISTS ( SELECT DEPTNO
+  4                     FROM EMP
+  5                     WHERE EMP.DEPTNO = DEPT.DEPTNO)
+  6* GROUP BY DEPTNO
+SQL> 
+SQL> 
+SQL> SPOOL OFF
