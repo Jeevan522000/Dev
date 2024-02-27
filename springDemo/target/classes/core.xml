@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+<bean id="myPen" class="springDemo.pen"></bean>
+
+<bean id="myPen1" class="setterInjection.Pen1">
+<property name="id" value="1"></property>
+<property name="brand" value="Trimax"></property>
+<property name="price" value="40"></property>
+</bean>
+
+<bean id="myCompany" class="setterInjection.company">
+<property name="id" value="1"></property>
+<property name="name" value="TCS"></property>
+<property name="noE" value="100000"></property>
+<property name="turnOver" value="150000000"></property>
+</bean>
+
+<bean id="myCar" class="dependencyInjection.Car">
+<property name="id" value="1"></property>
+<property name="brand" value="Ford"></property>
+<property name="price" value="1000000.50"></property>
+<property name="engine" ref="myEngine"></property>
+</bean>
+
+<bean id="myEngine" class="dependencyInjection.Engine"></bean>
+
+<bean id="myPerson" class="dependencyInjection.Person">
+<property name="id" value="1"></property>
+<property name="name" value="Jeevan"></property>
+<property name="age" value="23"></property>
+<property name="pan" ref="myPan"></property>
+</bean>
+
+<bean id="myPan" class="dependencyInjection.Pan"></bean>
+
+
+ <bean id="myMarker" class="constructorInjection.Marker">
+            <constructor-arg name="id" value="1"></constructor-arg>
+            <constructor-arg name="color" value="Black"></constructor-arg>
+            <constructor-arg name="price" value="100"></constructor-arg>
+            </bean>
+            
+             <bean id="myMobile" class="constructorInjection.Mobile">
+             <constructor-arg name="id" value="1"></constructor-arg>
+            <constructor-arg name="brand" value="Redmi"></constructor-arg>
+            <constructor-arg name="model" value="note 10"></constructor-arg>
+            <constructor-arg name="price" value="15000"></constructor-arg>
+            <constructor-arg name="sim" ref="mySim"></constructor-arg>
+            </bean>
+            
+            <bean id="mySim" class="constructorInjection.Sim">
+            <constructor-arg name="id" value="1"></constructor-arg>
+            <constructor-arg name="network" value="Jio"></constructor-arg>
+            <constructor-arg name="type" value="5g"></constructor-arg>
+            </bean>
+
+</beans>
